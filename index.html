@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Glory 小さな魔法の街へ</title>
+<style>
+  body {
+    font-family: 'Hiragino Kaku Gothic Pro', Meiryo, sans-serif;
+		background: linear-gradient(to bottom, #2c2a4a, #3b2e5a, #fff8f0);
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+
+	/* 中央寄せのヘッダー画像 */
+	.header-wrapper {
+  	position: relative;
+  	width: 100%;
+  	display: flex;
+  	justify-content: center; /* 中央寄せ */
+  	overflow: visible;
+  	margin-bottom: 0;
+	}
+
+	.header-image {
+  	width: 100%;
+  	max-width: 1000px; /* 画像幅上限 */
+  	display: block;
+		border-radius: 12px; /* 少し丸み*/
+  	box-shadow: 0 4px 10px rgba(0,0,0,0.1); /* 紙面感アップ */
+		height: auto;       /* アスペクト比保持 */
+  	margin: 0 auto;     /* 中央寄せ */
+	}
+
+	/* 装飾コンテナは画面全幅 */
+	.diamond-container {
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  	width: 100vw;  /* 画面全幅 */
+  	height: 100%;  /* 画像高さに合わせる */
+  	pointer-events: none;
+  	overflow: visible;
+  	z-index: 2; /* 画像より上に表示 */
+	}
+
+	.diamond {
+  	position: absolute;
+  	transform: rotate(45deg);
+  	border-radius: 2px;
+	}
+
+	.cat-navi {
+  	display: inline-block;   
+  	max-width: 80%;          
+  	background: #fdf6e3;
+  	border: 2px dashed #d4a373;
+  	padding: 8px 12px;
+  	margin: 10px auto 20px;  
+  	border-radius: 10px;
+  	font-size: 1rem;
+  	font-weight: bold;
+	}
+  /* Grid全体 */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: auto;
+    gap: 20px;
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 10px;
+  }
+	
+  /* ブログカード共通 */
+  .blog-card {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+		background-color: #3b2e5a; /* 暗めの背景で読書っぽく*/ 
+  	color: #b8860b; /* 基本は金色*/ 
+		height: auto;
+		border-left: 4px solid #FFD966;
+		/*background-color: #e0d7c4;  /* 暗めの落ち着いた色 */
+		/*color: #bfa151;             /* 暗めでも金色風 */
+  }
+
+	.blog-card h2 {
+  	font-size: 1.4rem;
+  	margin-bottom: 0.5rem;
+  	border-bottom: 2px dashed #d3c0b0; /* 控えめな装飾線 */
+  	padding-bottom: 4px;
+  	}
+	.blog-card p {
+  	font-size: 1rem;
+  	line-height: 1.8;
+	}
+
+	/* カード全体 */
+	.blog-card.magic{
+  	position: relative;
+  	overflow: hidden;
+  	transition: background-color 0.5s ease;
+	}
+	/* 光の帯*/ 
+	.blog-card.magic::before {
+  	content: "";
+  	position: absolute;
+  	top: 0;
+  	left: -60%;
+  	width: 60%;
+  	height: 100%;
+  	background: linear-gradient(
+    90deg,
+    rgba(220, 220, 235, 0) 0%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(200, 230, 255, 0) 100%
+  	);
+		pointer-events: none;
+	}
+
+	/* ホバーで光の帯アニメーション*/ 
+	.blog-card.magic:hover::before {
+  	animation: shine-horizontal 1s ease-out forwards;
+	}
+
+	/* 光の帯の動き*/ 
+	@keyframes shine-horizontal {
+  	0% { left: -60%; }
+  	100% { left: 100%; }
+	}
+
+	/* 初期状態の文字 */
+	.magic-text {
+  	color: #b8860b; /* 通常時は落ち着いた金色 */
+  	text-shadow: none;
+	}
+	/* 文字の輝きを光に同期*/ 
+	.blog-card.magic:hover .magic-text {
+  	animation: text-shine 1s ease-out forwards;
+	}
+
+	/* 文字色・シャドウのアニメーション*/ 
+	@keyframes text-shine {
+  	0% {
+    	color: #b8860b; /* 通常の金色*/ 
+    	text-shadow: none;
+  	}
+  	50% {
+    	color: #fff; /* 光にあたった部分は白っぽく*/ 
+    	text-shadow: 0 0 8px #fff, 0 0 12px #ffd700;
+  	}
+  	100% {
+    	color: #b8860b; /* 元の金色に戻る */
+    	text-shadow: none;
+  	}
+	}
+
+  .comment {
+    position: relative;
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 8px 0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+  .comment.blackcat {
+    background: #fff9c4;
+    border-left: 5px solid #fbc02d;
+    color: #333;
+  }
+  .comment.whitecat {
+    background: #e1f5fe;
+    border-left: 5px solid #0288d1;
+    color: #333;
+  }
+
+	/*魔法陣*/
+	.magic-circle {
+  	position: relative;
+  	padding: 1.5rem;
+  	border-radius: 12px;
+  	overflow: hidden;
+	}
+
+	/* 魔法陣の円模様 */
+	.magic-circle::after {
+  	content: "";
+  	position: absolute;
+  	bottom: -40px;
+  	left: 50%;
+  	width: 180px;
+  	height: 180px;
+  	transform: translateX(-50%);
+  	background: repeating-conic-gradient(
+    from 0deg,
+    rgba(255, 215, 0, 0.25) 0deg 10deg,
+    transparent 10deg 20deg
+  	),
+  	radial-gradient(circle,
+    transparent 45%,
+    rgba(255, 215, 0, 0.2) 48%,
+    transparent 52%);
+  	border-radius: 50%;
+  	opacity: 0;
+  	pointer-events: none;
+	}
+
+	/* ホバー時にふわっと浮かぶ */
+	.magic-circle:hover::after {
+  	animation: circle-up 1.5s ease-out forwards;
+	}
+
+	@keyframes circle-up {
+  	0% {
+    	opacity: 0;
+    	transform: translateX(-50%) scale(0.6) rotate(0deg);
+  	}
+  	50% {
+    	opacity: 0.6;
+    	transform: translateX(-50%) scale(1) rotate(90deg);
+  	}
+  	100% {
+    	opacity: 0;
+    	transform: translateX(-50%) scale(1.3) rotate(180deg);
+  	}
+	}
+
+	.blog-card.marco{
+		/*background-color: #fdf6e3;*/
+		background-color: #e0d7c4;  /* 暗めの落ち着いた色 */
+	}
+
+	h2.ink-magic {
+  	position: relative;
+  	color: #b8860b; /* 金色っぽい文字色 */
+  	z-index: 1;
+	}
+
+	/* 擬似要素でにじみを追加 */
+	h2.ink-magic::after {
+  	content: "";
+  	position: absolute;
+  	left: 50%;
+  	top: 50%;
+  	transform: translate(-50%, -50%);
+  	width: 120%;
+  	height: 140%;
+  	background: radial-gradient(circle, rgba(184,134,11,0.25) 0%, rgba(59,46,90,0) 70%);
+  	opacity: 0;
+  	transition: opacity 1.2s ease;
+  	z-index: -1;
+  	filter: blur(12px);
+	}
+
+	/* ホバーするとにじみが浮かぶ */
+		h2.ink-magic:hover::after {
+  	opacity: 1;
+	}
+
+	/*朝顔*/
+	.blog-card.maria {
+  	position: relative;
+		z-index: 0;
+	}
+	/* マリア専用の緑の光（before に分離） */
+	.blog-card.maria::after {
+  	content: "";
+  	position: absolute;
+  	top: 0;
+  	left: -20%;
+  	width: 140%;
+  	height: 200%;
+  	background: radial-gradient(
+    circle at 10% 5%,
+    rgba(180, 255, 200, 0.6) 0%,
+    rgba(120, 220, 160, 0.3) 30%,
+    rgba(80, 150, 120, 0) 70%
+  	);
+  	opacity: 0;
+  	pointer-events: none;
+  	filter: blur(6px);
+  	z-index: 1; /* 白光より下にしたい場合は 1、上にしたい場合は 3 */
+	}
+
+	.blog-card.maria:hover::after {
+  	animation: vineGlow 6s ease-in-out forwards;
+	}
+
+	/* アニメーション */
+	@keyframes vineGlow {
+ 	 	0%   { opacity: 0; }
+  	40%  { opacity: 1; }
+  	100% { opacity: 0; }
+	}
+
+	/* 蔓の位置調整 */
+	.blog-card.maria .vine {
+  	position: absolute;
+  	bottom: 0; right: 0;
+  	width: 200px;
+  	height: 200px;
+	}
+
+	.blog-card.maria .vine-layer {
+  	position: absolute;
+  	top: 0; left: 0;
+  	width: 100%; height: 100%;
+  	pointer-events: none; /* コンテンツ操作を邪魔しない */
+  	z-index: 2; /* コンテンツの上に出す */
+	}
+
+	.vine path.stem,
+	.vine path.glow {
+  	opacity: 0; /* 初期は透明*/ 
+	}
+
+	/* 茎（実体部分） */
+	.vine .stem {
+  	/*stroke: #2e4d1a;*/
+		stroke:#3b5f4f;
+  	stroke-width: 2;
+  	fill: none;
+  	stroke-linecap: round;
+  	stroke-dasharray: 1000;
+  	stroke-dashoffset: 1000;
+  	opacity: 0.8;
+	}
+
+	/* 光のレイヤー */
+	.vine .glow {
+  	stroke: #b8ffcc;
+		/*stroke:#7fffd4;*/
+  	stroke-width: 6;
+  	fill: none;
+  	stroke-linecap: round;
+  	stroke-dasharray: 1000;
+  	stroke-dashoffset: 1000;
+  	filter: blur(6px) drop-shadow(0 0 8px #dfffaa);
+  	opacity: 0.7;
+	}
+
+	/* 成長アニメーション */
+	@keyframes vine-grow {
+  	0%   { stroke-dashoffset: 1000; opacity: 0; }
+  	40%  { opacity: 1; }
+  	100% { stroke-dashoffset: 0; opacity: 0; }
+	}
+
+	/* ホバーしたときにだけ演出 */
+	.blog-card.maria:hover .stem,
+	.blog-card.maria:hover .glow {
+  	animation: vine-grow 3s ease forwards;
+	}
+
+	/* マリア専用 幻想的な薄緑の葉っぱ */
+	.blog-card.maria .leaf {
+		fill: rgba(150, 240, 180, 0.1); 
+		filter: drop-shadow(0 0 4px rgba(180, 255, 200, 0.1));
+  	opacity: 0;
+	}
+
+	/* ホバーで個別アニメーション */
+	.blog-card.maria:hover .leaf1 { animation: leafPop 2s forwards; animation-delay: 0s; }
+	.blog-card.maria:hover .leaf2 { animation: leafPop 2s forwards; animation-delay: 0.3s; }
+	.blog-card.maria:hover .leaf3 { animation: leafPop 2s forwards; animation-delay: 0.6s; }
+
+	@keyframes leafPop {
+  	0%   { opacity: 0; }
+  	20%  { opacity: 1; }
+  	80%  { opacity: 1; }
+  	100% { opacity: 0; }
+	}
+
+	/*魔法の羅針盤*/
+	.blog-card.haru {
+  	position: relative;
+	}
+
+	.compass {
+  	position: absolute;
+  	top: 10%;    /* 調整で上下位置変更 */
+  	left: 80%;   /* 調整で左右位置変更 */
+  	width: 120px;
+  	height: 120px;
+  	opacity: 0;  /* 初期は非表示 */
+  	transform: translate(-50%, -50%) scale(1);
+  	transition: opacity 0.5s ease, transform 0.5s ease;
+  	pointer-events: none;
+  	z-index: 3;
+	}
+
+	.blog-card.haru:hover .compass {
+  	opacity: 1;
+  	transform: translate(-50%, -50%) scale(2);
+		animation: compassAppear 2.5s ease-out forwards;/*追加*/
+	}
+	@keyframes compassAppear {
+  	0% {
+    	opacity: 0;
+    	transform: translate(-50%, -50%) scale(0.5);
+  	}
+  	20% {
+    	opacity: 1;
+    	transform: translate(-50%, -50%) scale(2);
+  	}
+  	80% {
+    	opacity: 1;
+    	transform: translate(-50%, -50%) scale(1.0);
+  	}
+  	100% {
+    	opacity: 0;
+    	transform: translate(-50%, -50%) scale(0.5);
+  	}
+	}
+
+	/* 針の回転アニメーション*/
+	.needle {
+  	transform-origin: 50% 50%; /* SVG中心に回転 */
+		stroke-width: 8;
+	}
+
+	.blog-card.haru:hover .needle.red,
+	.blog-card.haru:hover .needle.blue {
+  	animation: rotateNeedles 2s linear infinite;
+	}
+
+	@keyframes rotateNeedles {
+  	0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+	}
+
+	/* 古びた赤青に設定 */
+	.needle.red {
+  	stroke:#954D55;
+		opacity: 0.9;
+	}
+	.needle.blue {
+  	stroke: #5A5F9B;
+		opacity: 0.9;
+	}
+
+	/* 針の光を抑えて背景光と干渉させない */
+	.compass .needle {
+  	filter: drop-shadow(0 0 2px rgba(0,0,0,0.2)); /* 薄く光る */
+	}
+
+	/* 背景光の追加 */
+	.compass::before {
+  	content: "";
+  	position: absolute;
+  	top: 50%;
+  	left: 50%;
+  	width: 150%;
+  	height: 150%;
+  	background: radial-gradient(circle, rgba(255, 215, 0, 0.6) 0%, rgba(255, 215, 0, 0.0) 70%);
+  	border-radius: 50%;
+  	transform: translate(-50%, -50%) scale(0);
+  	opacity: 0;
+  	pointer-events: none;
+  	z-index: 0; /* 針や文字盤の下に表示 */
+	}
+
+	/* ホバー時に光る */
+	.blog-card.haru:hover .compass::before {
+  	animation: compassGlow 2.5s ease-out forwards;
+	}
+
+	@keyframes compassGlow {
+  	0% {
+    	opacity: 0;
+    	transform: translate(-50%, -50%) scale(0);
+  	}
+  30% {
+    	opacity: 0.6;
+    	transform: translate(-50%, -50%) scale(2);
+  	}
+  70% {
+    	opacity: 0.4;
+    	transform: translate(-50%, -50%) scale(2.5);
+  	}
+  100% {
+    	opacity: 0;
+    	transform: translate(-50%, -50%) scale(3);
+  	}
+	}
+
+	/*紙吹雪*/
+	.blog-card.allen {
+  	position: relative;
+  	overflow: hidden;
+  	border: 1px solid #ccc;
+		border-left: 4px solid #FFD966;
+		/*background-color: #fffaf0;*/
+		background-color: #fdf6e3;
+		text-shadow: 
+  		0 0 4px rgba(255, 255, 200, 0.6),
+  		0 0 8px rgba(255, 220, 150, 0.4);
+	}
+
+	.confetti {
+  	position: absolute;
+  	inset: 0;
+  	pointer-events: none;
+	}
+
+	.confetti span {
+  	position: absolute;
+  	width: 10px;
+  	height: 10px;
+  	background: hsl(var(--hue), 80%, 75%);
+  	/*border-radius: 50%;*/
+  	opacity: 0;
+  	transform: translateY(0) scale(0.5) rotate(0deg);
+	}
+		
+	/* 波紋 */
+	.blog-card.allen .ripple {
+  	position: absolute;
+  	top: 50%;
+  	left: 50%;
+  	width: 20px;
+  	height: 20px;
+  	background: radial-gradient(circle, rgba(50,120,255,0.6) 0%, rgba(80,160,255,0.4) 40%, transparent 70%);	
+		border-radius: 50%;
+  	transform: translate(-50%, -50%) scale(0);
+  	opacity: 0;
+  	pointer-events: none;
+	}
+
+	.blog-card.allen:hover .ripple {
+  	animation: rippleEffect 3s ease-out forwards;
+	}
+	
+	@keyframes rippleEffect {
+  0%   { transform: translate(-50%, -50%) scale(0.3); opacity: 0.9; }
+  40%  { opacity: 0.8; }
+  70%  { opacity: 0.5; }
+  100% { transform: translate(-50%, -50%) scale(45); opacity: 0; }
+}
+
+  /* サイドバー・カード */
+  .card {
+    background-color: #fdf6e3;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+		border-left: 3px solid #b35900; /* 統一感重視 */
+  }
+  .card h3 {
+    background: linear-gradient(to right, #fceabb, #f8b500);
+    margin: 0 0 5px 0;
+    font-size: 1rem;
+    padding: 6px 8px;
+    border-radius: 6px;
+  }
+
+  .news-item, .menu-item, .library-item, .note-item {
+    font-size: 0.95rem;
+    margin: 4px 0;
+  }
+
+	.news-column {
+		background:#fdf6e3;
+  	border: 1px solid #ddd;
+  	border-radius: 8px;
+  	padding: 12px 16px;
+  	font-size: 0.95rem;
+  	line-height: 1.6;
+  	box-shadow: 2px 2px 6px rgba(0,0,0,0.05);
+		border-left: 3px solid #b35900; /* 統一感重視 */
+		position: relative;/*追加*/
+	}
+
+	.news-column h3 {
+  	font-family: "Times New Roman", serif;
+  	font-size: 1.1rem;
+  	text-align: center;
+  	border-bottom: 2px solid #ccc;
+  	margin: 0 0 10px 0;
+  	padding-bottom: 4px;
+	}
+
+	.news-item {
+  	margin: 8px 0;
+  	text-indent: 1em; /* 新聞風の字下げ */
+	}
+
+	.news-item:first-letter {
+  	font-size: 1.2rem;
+  	font-weight: bold;
+  	color: #b35900;
+	}	
+
+	.news-column::before {
+  	content: "✦";
+  	position: absolute;
+  	top: 10%;
+  	right: 15%;
+  	font-size: 1rem;
+  	color: rgba(255, 255, 255, 0.7);
+  	opacity: 0;
+  	animation: twinkle 6s infinite;
+	}
+
+	@keyframes twinkle {
+  	0%, 90%, 100% { opacity: 0; transform: scale(0.5); }
+  	50% { opacity: 1; transform: scale(1.2); }
+	}
+
+	/* イベントボード全体 */
+	.event-board {
+  	background: #fffdf6;
+  	border: 2px dashed #d4a373;
+  	padding: 15px;
+  	border-radius: 12px;
+	}
+
+	/* 各イベント */
+	.event {
+  	background: #fdf6e3;
+  	border-left: 6px solid #b58900;
+  	margin: 10px 0;
+  	padding: 8px 12px;
+  	border-radius: 6px;
+	}
+
+	.event:nth-child(2) {
+  	background: #f8f0fa;
+  	border-left: 6px solid #6c3483; /* 魔女＝紫 */
+	}
+
+	.event:nth-child(3) {
+  	background: #fef7e0;
+  	border-left: 6px solid #d35400; /* 祭り＝橙 */
+	}
+
+	.event h4 {
+  	margin: 0;
+  	font-size: 1.1rem;
+  	color: #333;
+	}
+
+	.event p {
+  	margin: 5px 0 0;
+  	font-size: 0.9rem;
+  	color: #555;
+	}
+
+	/* イベント hover */
+	.event:hover {
+  	box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  	transform: scale(1.01);
+  	transition: 0.2s;
+	}
+
+	/* パン屋セクション */
+	.bakery-menu {
+  	background: #fff9f4;
+  	border: 2px solid #f5cba7;
+  	border-radius: 12px;
+  	padding: 12px;
+  	margin-bottom: 20px;
+		position: relative;/*追加*/
+  	transition: box-shadow 0.8s ease, border-color 0.8s ease;
+	}
+
+	.bakery-menu h3 {
+  	background: #f5cba7;
+  	color: #fff;
+  	padding: 6px 10px;
+  	border-radius: 8px;
+  	font-size: 1rem;
+  	margin: 0 0 10px 0;
+	}
+
+	.bakery-menu:hover {
+  	transform: translateY(-3px);
+  	transition: all 0.4s ease;
+		border-color: #ffe066; /* 金色に近い色 */
+  	box-shadow: 0 0 15px rgba(255, 224, 102, 0.7); /* ふんわり光る */
+	}
+	
+	/* カフェセクション */
+	.cafe-menu {
+  	background: #f8f9ff;
+  	border: 2px solid #c5cae9;
+  	border-radius: 12px;
+  	padding: 12px;
+		position: relative;
+  	overflow: visible;
+	}
+
+	.cafe-menu h3 {
+  	background: #7986cb;
+  	color: #fff;
+  	padding: 6px 10px;
+  	border-radius: 8px;
+  	font-size: 1rem;
+  	margin: 0 0 10px 0;
+	}
+
+	.smoke {
+  	position: absolute;
+  	bottom: 50%;/*0*/
+  	left: 10px; /* 10px左下から発生 */
+  	width: 18px;/*12*/
+  	height: 12px;/*12*/
+  	border-radius: 50%;
+  	opacity: 0;
+  	animation: rise 4s ease-in forwards;
+	}
+
+	.smoke.hamburger {
+  	background: radial-gradient(circle, #e6b17e 0%, #b5651d 80%);
+	}
+
+	.smoke.omelet {
+  	background: radial-gradient(circle, #ffeb99 0%, #f4d06f 80%);
+	}
+	
+	@keyframes rise {
+  	0% {
+    transform: translate(0, 0) scale(0.5) rotate(0deg);
+    opacity: 0.6;
+  	}
+  	50% {
+    transform: translate(30px, -60px) scale(1) rotate(10deg);
+    opacity: 0.7;
+		}
+  100% {
+    transform: translate(60px, -120px) scale(1.3) rotate(-10deg);
+    opacity: 0;
+  	}
+	}
+
+	.menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 4px 0;
+    border-bottom: 1px dotted #ddd;
+  }
+  .menu-item:last-child { border-bottom: none; }
+  .menu-item .note { font-size: 0.85rem; 
+		color: #7b5e57; margin-left: 1rem; text-align: right; white-space: nowrap; }
+
+	/* 猫の道案内 */
+	.cat-guide {
+  	background: #fdf6e3;
+  	border: 2px solid #d4a373;
+  	border-radius: 10px;
+  	padding: 12px;
+  	font-size: 0.95rem;
+	}
+
+	.cat-guide h3 {
+  	margin: 0 0 8px 0;
+  	font-size: 1rem;
+  	background: linear-gradient(to right, #ffe082, #ffd54f);
+  	padding: 6px 8px;
+  	border-radius: 6px;
+	}
+
+	/* ふきだし */
+	.cat-tip {
+  	margin: 8px 0;
+  	padding: 8px 12px;
+  	border-radius: 12px;
+  	position: relative;
+  	font-size: 0.9rem;
+  	line-height: 1.5;
+	}
+
+	.black-bubble {
+  	background: #fff9c4;
+  	border-left: 5px solid #fbc02d;
+	}
+	.white-bubble {
+  	background: #e1f5fe;
+  	border-left: 5px solid #0288d1;
+	}
+
+	/* 足跡マーク */
+	.cat-note {
+  	margin-top: 12px;
+  	padding: 8px;
+  	font-size: 0.85rem;
+  	color: #7b5e57;
+  	background: repeating-linear-gradient(
+    	-45deg, #fffdfa, #fffdfa 10px, #fdf6e3 10px, #fdf6e3 20px
+  	);
+  	border-radius: 8px;
+  	border: 1px dashed #d4a373;
+		display: inline-block;
+  	animation: sway 3s ease-in-out infinite;
+	}
+
+	/* ゆらゆらアニメーション */
+	@keyframes sway {
+  	0%   { transform: rotate(0deg) translateY(0); }
+  	25%  { transform: rotate(1deg) translateY(-2px); }
+  	50%  { transform: rotate(0deg) translateY(0); }
+  	75%  { transform: rotate(-1deg) translateY(2px); }
+  	100% { transform: rotate(0deg) translateY(0); }
+	}
+
+	/* 落とし物コーナー */
+	.lost-and-found {
+  	background: #fdf6e3;
+  	border: 2px dashed #d9b38c;
+  	position: relative;
+	}
+
+	.lost-item {
+  	padding: 6px;
+  	margin: 4px 0;
+  	background: #fffdfa;
+  	border-radius: 6px;
+  	box-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+  	transform: rotate(-1deg);
+	}
+
+	.lost-item:nth-child(odd) {
+  	transform: rotate(1deg);
+  	background: #fff7e6;
+	}
+
+	.lost-item.sparkle { color: #0e9672; /*font-weight: bold;*/ } 
+	.lost-item.feather { color: #006699;}
+	.lost-item.cats { color: #444; }
+	.lost-item.letter { color: #d94f4f; }
+	.lost-item.book { color: #555; font-size: 0.9em; }
+
+	.lost-item:hover {
+  	transform: rotate(2deg) scale(1.02);
+  	transition: 0.2s;
+	}
+
+  /*掲示板 */
+  .board {
+    background: #fdf6e3;
+    border: 3px double #d4a373;
+    padding: 12px;
+    border-radius: 12px;
+  }
+  .board h3 {
+    background: linear-gradient(to right, #ffe082, #ffca28);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 1rem;
+    margin: 0 0 10px 0;
+  }
+  .board-items {
+    display: flex;
+    gap: 10px;
+  }
+	
+	/* 画鋲風の飾り 
+	.note-item::before {
+  	content: "📌";
+  	margin-right: 4px;
+	}*/
+
+	/* 掲示板の貼り紙風アレンジ */
+	.board-items .note-item {
+  	position: relative;
+  	background: #fffef9;
+  	padding: 10px;
+  	border-radius: 8px;
+  	box-shadow: 2px 3px 6px rgba(0,0,0,0.1);
+  	transform: rotate(-1deg);
+  	transition: 0.2s;
+	}
+	.board-items .note-item:nth-child(odd) {
+  	background: #fff8e6;
+  	transform: rotate(1deg);
+	}
+	.board-items .note-item:hover {
+  	transform: rotate(0deg) scale(1.02);
+  	box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+	}
+	/* マスキングテープ風 */
+	.board-items .note-item::after {
+  	content: "";
+  	position: absolute;
+  	top: -6px;
+  	left: 50%;
+  	transform: translateX(-50%);
+  	width: 50px;
+  	height: 12px;
+  	background: repeating-linear-gradient(
+    	45deg, #ffd54f, #ffd54f 6px, #ffca28 6px, #ffca28 12px
+  	);
+  	border-radius: 4px;
+	}
+
+	/* 図書館カード */
+	.card.library {
+  	background: #f9f6ef;
+  	border: 2px solid #c2b280;
+  	font-family: "Times New Roman", serif;
+	}
+	.card.library h3 {
+  	background: linear-gradient(to right, #d4b483, #f9e4c8);
+  	font-size: 1rem;
+  	padding: 6px 10px;
+  	border-radius: 6px;
+  	text-align: center;
+	}
+	.library-item {
+  	margin: 8px 0;
+  	padding: 6px 8px;
+  	background: #fff;
+  	border-left: 4px solid #a1887f;
+  	border-radius: 6px;
+  	box-shadow: 1px 1px 3px rgba(0,0,0,0.05);
+  	transition: 0.2s;
+	}
+	.library-item:hover {
+  	background: #fdf3e7;
+  	transform: scale(1.01);
+	}
+
+	footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: #666;
+  }
+
+</style>
+</head>
+<body>
+
+	<div class="header-wrapper">
+  	<img src="morning.png" alt="ヘッダー画像" class="header-image">
+  	<div class="diamond-container"></div>
+	</div>
+
+	<div style="text-align:center;">
+  	<div class="cat-navi">
+		🐾 モーニンググローリーへようこそ！黒猫・白猫コンビがご案内します！
+  	</div>
+	</div>
+
+	<div class="grid-container">
+  <!-- 1段目：リナ横長、右に白黒コラム -->
+  	<div class="blog-card rina magic magic-circle" style="grid-column: span 8;">
+    	<h2 class="ink-magic">リナと夜明けの星屑パン</h2>
+    	<p class="magic-text">港は濃い霧に包まれ、灯台の光がぼんやり水面に揺れている。オーブンの唸りと甘い香りで、街も少しずつ目を覚ます。魔女さんは今日も早く来すぎて、ほうきを抱えてワルツを踊りながら、パンの焼きあがりを待っているの</p>
+			<div class="comment blackcat">🐾 黒猫：「星屑パンの甘い匂いは、眠気を誘うにゃーん」</div>
+    	<div class="comment whitecat">🐾 白猫：「・・魔女さん、まだ寝ぼけてるのかも？」</div>
+  	</div>
+
+		<div class="card news-column" style="grid-column: span 4;">
+  		<h3>📰 本日の白黒コラム</h3>
+  		<div class="news-item">朝霧指数は「やや濃い」。港では霧笛が三度鳴り、猫たちの散歩コースは急きょ変更に</div>
+  		<div class="news-item">司書さまの不快指数は九十三。紅茶三杯でやっと眉間のしわがほぐれ、学生たちもようやく安堵</div>
+  		<div class="news-item">画伯は突き指から完全復活。次作は「カレイとヒラメ」を予定しているらしい</div>
+  		<div class="news-item">桟橋の西側では、少年の爆走スニーカーを再び確保。靴紐はついに拘束具として認定された</div>
+		</div>
+
+  <!-- 2段目：マルコ縦長、右にリナお勧め+カフェランチ二段 -->
+  	<div class="blog-card marco magic " style="grid-column: span 5;">
+    	<h2 class="ink-magic">マルコのカフェ・グローリー</h2>
+    	<p class="magic-text">朝一番の注文は香り豊かなキリマンジャロ。カウンターで豆を挽くと、柱時計で小鳥が囀る。コーヒーは、いつだって今日と昨日をつなぐ架け橋だ。湯気の向こうで、小さなオルゴールが鈍い輝きを放っている</p>
+    	<div class="comment blackcat">🐾 黒猫：「オルゴールのネジはコロッとして可愛いな」</div>
+    	<div class="comment whitecat">🐾 白猫：「珈琲ミルは大きなネジを巻いているみたい」</div>
+  	</div>
+  	<div style="grid-column: span 3; display: flex; flex-direction: column; gap: 10px;">
+    	<div class="card bakery-menu">
+      	<h3>🥖 Rina's Recommendation</h3>
+      	<div class="menu-item"><span>星屑パン</span><span class="note">夜明けにきらめく甘い夢</span></div>
+      	<div class="menu-item"><span>向日葵パン</span><span class="note">優しい太陽のカスタード</span></div>
+      	<div class="menu-item"><span>タルト</span><span class="note">庭の果実がこっそりかくれんぼ</span></div>
+    	</div>
+    	<div class="card cafe-menu">
+      	<h3>☕ Glory's Lunch</h3>
+				<div class="menu-item"><span>ハンバーグ</span><span class="note">彩野菜踊るサラダ付き</span></div>
+      	<div class="menu-item"><span>オムレツ</span><span class="note">半熟卵黄金のとろふわ</span></div>
+      	<div class="menu-item"><span>チャウダー</span><span class="note">ホタテとポテトの大合唱</span></div>
+			</div>
+  	</div>
+  	<div class="card event-board" style="grid-column: span 4;">
+    	<h3>🌟 今週のイベント</h3>
+    	<div class="event">
+      <h4>🐾 猫のお茶会</h4>
+      <p>ミルクとクッキーでほっこり。ひげの泡立ち選手権も同時開催！</p>
+    	</div>
+    	<div class="event">
+      <h4>🔮 魔女の集会</h4>
+      <p>星読みの夜。灯台の下で魔法陣が光ります。ひとつ願いごとをどうぞ</p>
+    	</div>
+    	<div class="event">
+      <h4>🎶 灯りと音楽の夕べ</h4>
+      <p>ランタンの灯りとアコーディオンの音色。広場は夢のダンスホールに</p>
+    	</div>
+  	</div>
+
+  <!-- 3段目：猫コンビ左、ハル、落とし物 -->
+		<div class="card cat-guide" style="grid-column: span 3;">
+  		<h3>🐾 猫コンビの街案内</h3>
+  		<div class="cat-tip black-bubble">
+    	<span class="blackcat">黒猫：</span>
+    	<span>「朝市は港の階段を三つ降りたところにあるにゃ」</span>
+  		</div>
+  		<div class="cat-tip white-bubble">
+    	<span class="whitecat">白猫：</span>
+    	<span>「焼きたてタルトの匂いに誘われると、不思議の庭に迷いこむよ」</span>
+  		</div>
+  		<div class="cat-note">
+    	🌟 本日の寄り道コース：<br>🐾 坂道 → 🐾 噴水 → 🐾 マリアの庭
+  		</div>
+		</div>
+
+		<div class="blog-card haru magic" style="grid-column: span 6;">
+			<div class="compass">
+    	<svg viewBox="0 0 200 200" width="120" height="120">
+       <!--文字盤--> 
+      	<circle class="compass-face" cx="100" cy="100" r="90" fill="none" stroke="#444" stroke-width="3"/>     
+       <!--赤針--> 
+      	<line class="needle red" x1="100" y1="100" x2="100" y2="20" stroke-linecap="round"/>      
+      <!--青針-->
+      	<line class="needle blue" x1="100" y1="100" x2="100" y2="180" stroke-linecap="round"/>
+    	</svg>
+  	</div>
+	
+    	<h2 class="haru-compass" style="position: relative;">ハルと石畳の坂道</h2>
+    	<p class="magic-text">ビー玉と古い羅針盤をポケットに突っこんで、広場へと続く坂道を駆けおりる。今日こそ、マリアさんに宝物を見せてもらうんだ。「おはよう！」声をかけると、通りの窓からにゃんこがぴょこんと顔を出す</p>
+    	<div class="comment blackcat">🐾 黒猫：「ハルは今日も元気だな。あのポケットは底なしだよ」</div>
+    	<div class="comment whitecat">🐾 白猫：「羅針盤は魔法の在り処を指してるよ！」</div>
+  	</div>
+  	<div class="card lost-and-found" style="grid-column: span 3;">
+    	<h3>落とし物コーナー</h3>
+    	<div class="lost-item sparkle">🔮 正二十一面体の虹色ビー玉</div>
+    	<div class="lost-item feather">🪶 元気の無い詩人の羽根ペン</div>
+    	<div class="lost-item cats">🐾 生意気な猫二匹の名前</div>
+    	<div class="lost-item letter">💌 行き場をなくしたラブレター</div>
+    	<div class="lost-item book">📖 ※古書は図書館で保管しています</div>
+  	</div>
+
+  <!-- 4段目：マリア左、アレン右 -->
+  	<div class="blog-card maria magic" style="grid-column: span 6;">
+    	<h2 class="ink-magic">マリアと朝の光</h2>
+    	<p class="magic-text">毎日、猫が先に新聞を読みに来るんですけどね、あの子ったら占いの欄ばかり見てるんですよ。昨日はラッキーカラーが青だって言ってたわね。ああ、そうそう、時々どこかで、小さなチチンプイの音がするんです。そうすると庭の草花がちょっと伸びたり、石畳の隙間に小さな芽が顔を出したりするんですよ。まあ、不思議ですわねえ</p>
+    	<div class="comment blackcat">🐾 黒猫：「マリアさんは'幸せ'を刺繍できるって本当かな」</div>
+    	<div class="comment whitecat">🐾 白猫：「芽が出たら、ぼくが先に座っちゃおっと！」</div>
+
+		<!-- 蔦（右下から左上に伸びる）-->
+  		<div class="vine vine-layer">
+    	<svg viewBox="0 0 700 700" width="700" height="700">
+      <!--茎 
+      <path class="stem" d="M550,350 C150,150 80,100 0,50" />-->
+			<path class="stem" d="M550,350 C400,200 250,500 40,90" />
+
+      <!--光
+      <path class="glow" d="M550,350 C150,150 80,100 0,50" />-->
+			<path class="glow" d="M550,350 C400,200 250,500 40,90" />
+
+			<!-- 葉っぱ（数枚配置） -->
+    	<path class="leaf glow-leaf leaf2"
+          d="M0,0 C10,-20 30,-20 40,0 C30,20 10,20 0,0 Z"
+          transform="translate(420,260) rotate(-20)" />
+    	<path class="leaf glow-leaf leaf1"
+          d="M0,0 C10,-20 30,-20 40,0 C30,20 10,20 0,0 Z"
+          transform="translate(300,350) rotate(40)" />
+    	<path class="leaf glow-leaf leaf3"
+          d="M0,0 C10,-20 30,-20 40,0 C30,20 10,20 0,0 Z"
+          transform="translate(180,200) rotate(-45)" />
+			</svg>
+			</div>
+		</div>
+		
+  	<div class="blog-card allen magic" style="grid-column: span 6;">
+			<h2 class="ink-magic">アレンのアルバイト</h2>
+			<div class="confetti"></div>
+  		<div class="ripple"></div>
+    	<p class="magic-text">アルバイトで図書館の本の配達。この街の住人は読書好き。道案内の子猫を追いかけ、路地を抜けると、小さな市場と噴水が現れる。色とりどりの賑わいの向こうには、洗濯物が小さな旗のように揺れる緑の庭。初めて来た気がしないな</p>
+    	<div class="comment blackcat">🐾 黒猫：「アレンは西の留学生、世界を三分の二周してやって来た！」</div>
+    	<div class="comment whitecat">🐾 白猫：「洗濯物の旗って、じゃれつきたくなるよね？」</div>
+  	</div>
+
+  <!-- 5段目：街の掲示板横長、右に図書ニュース -->
+  	<div class="board" style="grid-column: span 9;">
+    	<h3>🪧街の掲示板</h3>
+    	<div class="board-items">
+      <div class="note-item">🪄 求人票<br>
+        「魔女の助手募集」夜ふかしできる方歓迎。ほうきでの移動あり。猫好き必須<br>
+        「図書館アルバイト」本の声が聞こえても怖がらない方。週3〜可<br>
+        「灯台スタッフ急募」霧の日に迷子にならない方向感覚の持ち主、大歓迎
+      </div>
+      <div class="note-item">🏠 物件情報<br>
+        「丘の上の一軒家」星空観測に最適。窓から流れ星がよく見えます<br>
+        「石畳沿いのアパート」階段多め。鍵は歌わないと開きません<br>
+        「古時計付きの小部屋」たまに時間を忘れますが、ご愛嬌。家賃お手頃
+      </div>
+      <div class="note-item">📢 街の広告<br>
+        「ハルのビー玉交換会」珍しい模様のビー玉募集中！ボンボンと交換します<br>
+        「マリアの庭しごと手伝い」花の世話で、たまに妖精からチップをもらえます<br>
+        「マルコの夜カフェ」深夜限定。月明りのテラスにオルゴールのささやき
+      </div>
+      <div class="note-item">🛠️ 灯台修繕アルバイト募集（夜景つき・長期）<br>
+				🎨 モデル募集中：忍耐強く口のかたい方<br>
+				🦜迷子のオウム探しています（口ぐせは『明日は明日の風が吹く』）
+			</div>
+    	</div>
+  	</div>
+  	<div class="card library" style="grid-column: span 3;">
+    	<h3>📚 みんなの図書館</h3>
+    	<div class="library-item">今週の新刊：<br>『空飛ぶ鍋と99のレシピ』<br>（※貸し出しは調理場に立てる方限定です）</div>
+    	<div class="library-item">迷子の古書：<br>『夢の地図帳・第7巻』<br>（夜になると“帰りたい〜”と泣き出します。持ち主の方はお早めに）</div>
+			<div class="library-item">🐾入荷待ち:『船員の主張vol2』</div>
+		</div>
+	</div>
+<script>
+
+	const container = document.querySelector('.diamond-container');
+	for (let i = 0; i < 40; i++) {
+  	const diamond = document.createElement('div');
+  	diamond.classList.add('diamond');
+  	diamond.style.left = `${Math.random() * 100}%`;
+  	diamond.style.top = `${70 + Math.random() * 30}%`; 
+  	const size = 10 + Math.random() * 20;
+  	diamond.style.width = `${size}px`;
+  	diamond.style.height = `${size}px`;
+  	diamond.style.background = `rgba(255, 255, 255, ${0.05 + Math.random() * 0.07})`;
+  	container.appendChild(diamond);
+	}
+
+	setInterval(() => {
+  const menu = document.querySelector(".cafe-menu");
+  const smoke = document.createElement("div");
+  smoke.classList.add("smoke");
+
+  // 50%の確率でハンバーグ or オムレツ
+  if (Math.random() > 0.5) {
+    smoke.classList.add("hamburger");
+  } else {
+    smoke.classList.add("omelet");
+  }
+  menu.appendChild(smoke);
+
+  // アニメが終わったら削除
+  setTimeout(() => {
+    smoke.remove();
+  	}, 4000);
+	}, 1200); // 発生間隔
+
+	document.querySelectorAll('.blog-card.maria').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    const vine = card.querySelector('.vine svg');
+    vine.style.animation = 'none';
+    vine.offsetHeight; // Reflow（アニメーションをリセットするテクニック）
+    vine.style.animation = null;
+  	});
+	});
+	
+	const confettiContainer = document.querySelector('.confetti');
+
+	// spanを生成
+	for (let i = 0; i < 40; i++) {
+  	const span = document.createElement('span');
+  	span.style.setProperty('--hue', Math.floor(Math.random() * 360));
+  	span.style.left = `${Math.random() * 100}%`;
+  	/*span.style.top = `70%`; // 下の方から*/
+		span.style.top = `${80 + Math.random() * 10}%`; // 80～90%の範囲で下から出現
+
+  confettiContainer.appendChild(span);
+	}
+
+	// ホバー時のアニメーション
+	confettiContainer.parentElement.addEventListener('mouseenter', () => {
+  	confettiContainer.querySelectorAll('span').forEach(span => {
+    const x = (Math.random() - 0.5) * 200; // 横ランダム
+    const y = -150 - Math.random() * 100;  // 上方向
+    const rotate = Math.random() * 1080;   // 回転
+
+    // 再描画リセット
+    span.style.transition = 'none';
+    span.style.transform = 'translateY(0) scale(0.5) rotate(0deg)';
+    span.style.opacity = 1;
+    span.offsetHeight; // reflow
+
+    // アニメーション適用
+    span.style.transition = 'transform 2.5s ease-out, opacity 2.5s ease-out';
+    span.style.transform = `translate(${x}px, ${y}px) rotate(${rotate}deg) scale(1.2)`;
+    span.style.opacity = 0;
+  	});
+	});
+
+
+</script>
+
+<footer>
+  &copy; 2025 Morning Glory 朝顔の魔法
+</footer>
+</body>
+</html>
