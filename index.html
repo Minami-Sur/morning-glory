@@ -45,11 +45,17 @@
   	overflow: visible;
   	z-index: 2; /* 画像より上に表示 */
 	}
-
+	
 	.diamond {
   	position: absolute;
   	transform: rotate(45deg);
   	border-radius: 2px;
+  	animation: sparkle 2s ease-in-out infinite;
+	}
+
+	@keyframes sparkle {
+  	0%, 100% { opacity: 0.2; transform: rotate(45deg) scale(1); }
+  	50% { opacity: 0.8; transform: rotate(45deg) scale(1.2); }
 	}
 
 	.cat-navi {
@@ -82,7 +88,6 @@
   	color: #b8860b; /* 基本は金色*/ 
 		height: auto;
 		border-left: 4px solid #FFD966;
-		/*background-color: #e0d7c4;  /* 暗めの落ち着いた色 */
 		/*color: #bfa151;             /* 暗めでも金色風 */
   }
 
@@ -178,38 +183,70 @@
   }
 
 	/*魔法陣*/
-	.magic-circle {
+	.blog-card.rina {
+  	grid-column: span 8; /* HTMLのgrid指定と合わせる */
   	position: relative;
-  	padding: 1.5rem;
+  	padding: 1rem 1.5rem;
   	border-radius: 12px;
-  	overflow: hidden;
+  	background-color: #3b2e5a;
+  	color: #b8860b;
+		overflow: hidden;/*追加*/
 	}
 
-	/* 魔法陣の円模様 */
-	.magic-circle::after {
-  	content: "";
+	.magic-circle {
   	position: absolute;
+  	pointer-events: none;
+		border-radius: 50%;/*追加*/
+	}
+
+	/* 大きい魔法陣 */
+	.magic-circle-bottom {
   	bottom: -40px;
   	left: 50%;
   	width: 180px;
   	height: 180px;
   	transform: translateX(-50%);
   	background: repeating-conic-gradient(
-    from 0deg,
-    rgba(255, 215, 0, 0.25) 0deg 10deg,
-    transparent 10deg 20deg
-  	),
-  	radial-gradient(circle,
-    transparent 45%,
-    rgba(255, 215, 0, 0.2) 48%,
-    transparent 52%);
-  	border-radius: 50%;
+      from 0deg,
+      rgba(255, 215, 0, 0.25) 0deg 10deg,
+      transparent 10deg 20deg
+    ),
+    radial-gradient(circle,
+      transparent 45%,
+      rgba(255, 215, 0, 0.2) 48%,
+      transparent 52%
+    );
+  	z-index: 2;
   	opacity: 0;
-  	pointer-events: none;
 	}
 
-	/* ホバー時にふわっと浮かぶ */
-	.magic-circle:hover::after {
+	/* ホバーでアニメーション */
+	.blog-card.rina:hover .magic-circle-bottom {
+  	animation: circle-up 1.5s ease-out forwards;
+	}
+
+	/* 小さい右上魔法陣 */
+	.magic-circle-topright {
+  	top: 0;
+  	right: 0;
+  	width: 100px;
+  	height: 100px;
+  	background: repeating-conic-gradient(
+      from 0deg,
+      rgba(255, 215, 0, 0.25) 0deg 10deg,
+      transparent 10deg 20deg
+    ),
+    radial-gradient(circle,
+      transparent 45%,
+      rgba(255, 215, 0, 0.2) 48%,
+      transparent 52%
+    );
+  	z-index: 3;
+  	opacity: 0;
+	}
+
+	/* 必要ならホバーで表示 */
+	.blog-card.rina:hover .magic-circle-topright {
   	animation: circle-up 1.5s ease-out forwards;
 	}
 
@@ -226,19 +263,96 @@
     	opacity: 0;
     	transform: translateX(-50%) scale(1.3) rotate(180deg);
   	}
+	}	
+
+/* 青銀スター */
+.magic-circle-bluesilver-star {
+  background: repeating-conic-gradient(
+      from 0deg,
+      rgba(173,216,230,0.5) 0deg 10deg,  /* ライトブルー */
+      rgba(100,149,237,0.15) 10deg 20deg /* コーンフラワーブルー */
+    ),
+    radial-gradient(circle,
+      rgba(173,216,230,0.4) 30%,
+      rgba(135,206,250,0.2) 50%,  /* スカイブルーで星の光 */
+      transparent 55%
+    );
+  filter: drop-shadow(0 0 8px rgba(173,216,230,0.6))
+          drop-shadow(0 0 4px rgba(135,206,250,0.4));
+}
+
+
+	/* 親にperspectiveを付与（3D効果が強調される） */
+	.blog-card.marco-container {
+  	perspective: 800px;
 	}
 
-	.blog-card.marco{
-		/*background-color: #fdf6e3;*/
-		background-color: #e0d7c4;  /* 暗めの落ち着いた色 */
+	.blog-card.marco {
+  	position: relative;
+  	background: #e0d7c4;
+  	padding: 16px;
+  	border-radius: 8px;
+  	box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  	transform-origin: top center;
+  	animation: peel 8s ease-in-out infinite;
+  	/* perspectiveは削除、親で設定 */
 	}
+
+	/* 下カール感を出す影 */
+	.blog-card.marco::after {
+  	content: "";
+  	position: absolute;
+  	bottom: -6px;
+  	left: 0;
+  	width: 100%;
+  	height: 28px;/*20px*/
+  	background: radial-gradient(
+    ellipse at top,
+    rgba(0, 0, 0, 0.25) 0%,
+    rgba(0, 0, 0, 0) 90%
+  	);
+  	opacity: 0;
+  	transform-origin: top;
+  	transition: opacity 0.4s ease, border-radius 0.4s ease;
+  	z-index: -1; /* 下に敷く */
+		border-bottom-left-radius: 16px;  /* 左下を丸める追加 */
+  	border-bottom-right-radius:16px; /* 右下を丸める 追加*/
+		animation: shadowPeel 8s ease-in-out infinite;
+	}	
+ 	
+	@keyframes peel {
+  	0%, 100% {
+    transform: rotateX(0deg);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  	}
+  20% {
+    transform: rotateX(-15deg); /* 回転強調 -12*/
+    box-shadow: 0 12px 18px rgba(0,0,0,0.3);/*0.25*/
+  	}
+  50% {
+    transform: rotateX(0deg);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  	}
+	}
+
+	@keyframes shadowPeel {
+  0%, 100% { opacity: 0; }
+  20% { opacity: 1; }
+  50% { opacity: 0.2; }
+	}
+
+	/* ホバー時は強制的に影を濃く */
+	.blog-card.marco:hover::after,
+	.blog-card.marco:focus-within::after {
+  	opacity: 1;
+	}
+
 
 	h2.ink-magic {
   	position: relative;
   	color: #b8860b; /* 金色っぽい文字色 */
   	z-index: 1;
 	}
-
 	/* 擬似要素でにじみを追加 */
 	h2.ink-magic::after {
   	content: "";
@@ -255,10 +369,14 @@
   	filter: blur(12px);
 	}
 
-	/* ホバーするとにじみが浮かぶ */
+	.blog-card:hover h2.ink-magic::after{
+		opacity: 1;
+	}
+
+	/* ホバーするとにじみが浮かぶ 
 		h2.ink-magic:hover::after {
   	opacity: 1;
-	}
+	}*/
 
 	/*朝顔*/
 	.blog-card.maria {
@@ -539,7 +657,7 @@
   40%  { opacity: 0.8; }
   70%  { opacity: 0.5; }
   100% { transform: translate(-50%, -50%) scale(45); opacity: 0; }
-}
+	}
 
   /* サイドバー・カード */
   .card {
@@ -575,7 +693,6 @@
 	}
 
 	.news-column h3 {
-  	font-family: "Times New Roman", serif;
   	font-size: 1.1rem;
   	text-align: center;
   	border-bottom: 2px solid #ccc;
@@ -655,6 +772,23 @@
   	transform: scale(1.01);
   	transition: 0.2s;
 	}
+
+	/* 光るアニメーションを定義 */
+	@keyframes softGlow {
+  	0% { opacity: 1; filter: brightness(1); }
+  	50% { opacity: 1; filter: brightness(1.4); }
+  	100% { opacity: 1; filter: brightness(1); }
+	}
+
+	/* イベントアイテムにアニメーション適用 */
+	.event {
+  	animation: softGlow 12s ease-in-out infinite;/*4*/
+	}
+
+	/* それぞれに少しずつ遅延をかける */
+	.event:nth-child(1) { animation-delay: 0s; }
+	.event:nth-child(2) { animation-delay: 4s; }
+	.event:nth-child(3) { animation-delay: 8s; }
 
 	/* パン屋セクション */
 	.bakery-menu {
@@ -764,7 +898,6 @@
   	border-radius: 6px;
 	}
 
-	/* ふきだし */
 	.cat-tip {
   	margin: 8px 0;
   	padding: 8px 12px;
@@ -839,6 +972,13 @@
   	transition: 0.2s;
 	}
 
+	/* バサバサ用アニメーション 追加*/
+	.lost-item.flap-lost {
+  	transform: rotate(-8deg) translateY(-3px);
+  	box-shadow: 2px 4px 6px rgba(0,0,0,0.15);
+  	transition: transform 0.25s ease, box-shadow 0.25s ease;
+	}
+
   /*掲示板 */
   .board {
     background: #fdf6e3;
@@ -858,30 +998,57 @@
     gap: 10px;
   }
 	
-	/* 画鋲風の飾り 
-	.note-item::before {
-  	content: "📌";
-  	margin-right: 4px;
-	}*/
+	.notice-card {
+  	transform-origin: top center;
+  	animation: flap 6s ease-in-out infinite;
+	}
 
-	/* 掲示板の貼り紙風アレンジ */
+	@keyframes flap {
+  	0%, 100% { transform: rotateX(0deg); }
+  	50% { transform: rotateX(4deg); }
+	}
+
+	/* 掲示板の貼り紙風アレンジ めくれるアニメーションを note-item に適用 */
 	.board-items .note-item {
   	position: relative;
   	background: #fffef9;
   	padding: 10px;
   	border-radius: 8px;
   	box-shadow: 2px 3px 6px rgba(0,0,0,0.1);
-  	transform: rotate(-1deg);
-  	transition: 0.2s;
+  	/*transform: rotate(-1deg);元*/
+  	transform-origin: top center; /* めくれる軸を上辺にする 追加 */
+  	animation: sway2 5s ease-in-out infinite;/*追加*/
+  	transition: 0.3s;
 	}
+	
 	.board-items .note-item:nth-child(odd) {
   	background: #fff8e6;
-  	transform: rotate(1deg);
+  	/*transform: rotate(1deg);元*/
 	}
+	
+	/* ホバー時は停止して少し拡大 */
 	.board-items .note-item:hover {
+  	animation-play-state: paused;/*追加*/
   	transform: rotate(0deg) scale(1.02);
-  	box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  	box-shadow: 0 6px 12px rgba(0,0,0,0.2);/*元0 4px 8px*/
 	}
+
+	/* ひらひら揺れる＋少し浮く */
+	@keyframes sway2 {
+  	0%, 100% {
+    transform: rotate(0deg) translateY(0) scale(1);
+    box-shadow: 2px 3px 6px rgba(0,0,0,0.1);
+  	}
+  25% {
+    transform: rotate(-1.5deg) translateY(-2px) scale(1.01);
+    box-shadow: 4px 6px 8px rgba(0,0,0,0.15);
+  	}
+  75% {
+    transform: rotate(1.5deg) translateY(-2px) scale(1.01);
+    box-shadow: -4px 6px 8px rgba(0,0,0,0.15);
+  	}
+	}
+
 	/* マスキングテープ風 */
 	.board-items .note-item::after {
   	content: "";
@@ -901,7 +1068,6 @@
 	.card.library {
   	background: #f9f6ef;
   	border: 2px solid #c2b280;
-  	font-family: "Times New Roman", serif;
 	}
 	.card.library h3 {
   	background: linear-gradient(to right, #d4b483, #f9e4c8);
@@ -948,12 +1114,14 @@
 
 	<div class="grid-container">
   <!-- 1段目：リナ横長、右に白黒コラム -->
-  	<div class="blog-card rina magic magic-circle" style="grid-column: span 8;">
-    	<h2 class="ink-magic">リナと夜明けの星屑パン</h2>
+		<div class="blog-card rina magic" style="grid-column: span 8;">
+  		<div class="magic-circle magic-circle-bottom magic-circle-bluesilver-star"></div>
+			<div class="magic-circle magic-circle-topright magic-circle-bluesilver-star"></div>
+			<h2 class="ink-magic">リナと夜明けの星屑パン</h2>
     	<p class="magic-text">港は濃い霧に包まれ、灯台の光がぼんやり水面に揺れている。オーブンの唸りと甘い香りで、街も少しずつ目を覚ます。魔女さんは今日も早く来すぎて、ほうきを抱えてワルツを踊りながら、パンの焼きあがりを待っているの</p>
 			<div class="comment blackcat">🐾 黒猫：「星屑パンの甘い匂いは、眠気を誘うにゃーん」</div>
     	<div class="comment whitecat">🐾 白猫：「・・魔女さん、まだ寝ぼけてるのかも？」</div>
-  	</div>
+		</div>	
 
 		<div class="card news-column" style="grid-column: span 4;">
   		<h3>📰 本日の白黒コラム</h3>
@@ -1026,14 +1194,15 @@
       <!--青針-->
       	<line class="needle blue" x1="100" y1="100" x2="100" y2="180" stroke-linecap="round"/>
     	</svg>
-  	</div>
+  		</div>
 	
     	<h2 class="haru-compass" style="position: relative;">ハルと石畳の坂道</h2>
     	<p class="magic-text">ビー玉と古い羅針盤をポケットに突っこんで、広場へと続く坂道を駆けおりる。今日こそ、マリアさんに宝物を見せてもらうんだ。「おはよう！」声をかけると、通りの窓からにゃんこがぴょこんと顔を出す</p>
     	<div class="comment blackcat">🐾 黒猫：「ハルは今日も元気だな。あのポケットは底なしだよ」</div>
     	<div class="comment whitecat">🐾 白猫：「羅針盤は魔法の在り処を指してるよ！」</div>
   	</div>
-  	<div class="card lost-and-found" style="grid-column: span 3;">
+
+		<div class="card lost-and-found" style="grid-column: span 3;">
     	<h3>落とし物コーナー</h3>
     	<div class="lost-item sparkle">🔮 正二十一面体の虹色ビー玉</div>
     	<div class="lost-item feather">🪶 元気の無い詩人の羽根ペン</div>
@@ -1115,6 +1284,7 @@
 			<div class="library-item">🐾入荷待ち:『船員の主張vol2』</div>
 		</div>
 	</div>
+
 <script>
 
 	const container = document.querySelector('.diamond-container');
@@ -1127,27 +1297,31 @@
   	diamond.style.width = `${size}px`;
   	diamond.style.height = `${size}px`;
   	diamond.style.background = `rgba(255, 255, 255, ${0.05 + Math.random() * 0.07})`;
-  	container.appendChild(diamond);
+  	
+		 // ランダムにアニメーション開始タイミングをずらす
+  	diamond.style.animationDelay = `${Math.random() * 3}s`;
+		
+		container.appendChild(diamond);
 	}
 
 	setInterval(() => {
-  const menu = document.querySelector(".cafe-menu");
-  const smoke = document.createElement("div");
-  smoke.classList.add("smoke");
+  	const menu = document.querySelector(".cafe-menu");
+  	const smoke = document.createElement("div");
+  	smoke.classList.add("smoke");
 
   // 50%の確率でハンバーグ or オムレツ
-  if (Math.random() > 0.5) {
-    smoke.classList.add("hamburger");
-  } else {
-    smoke.classList.add("omelet");
-  }
-  menu.appendChild(smoke);
+  	if (Math.random() > 0.5) {
+    	smoke.classList.add("hamburger");
+  	} else {
+    	smoke.classList.add("omelet");
+  	}
+  	menu.appendChild(smoke);
 
   // アニメが終わったら削除
-  setTimeout(() => {
-    smoke.remove();
-  	}, 4000);
-	}, 1200); // 発生間隔
+  	setTimeout(() => {
+    	smoke.remove();
+  		}, 4000);
+		}, 1200); // 発生間隔
 
 	document.querySelectorAll('.blog-card.maria').forEach(card => {
   card.addEventListener('mouseenter', () => {
@@ -1159,7 +1333,6 @@
 	});
 	
 	const confettiContainer = document.querySelector('.confetti');
-
 	// spanを生成
 	for (let i = 0; i < 40; i++) {
   	const span = document.createElement('span');
@@ -1191,9 +1364,50 @@
   	});
 	});
 
+	/*落とし物ばさばさ*/
+	document.addEventListener("DOMContentLoaded", () => {
+  	const items = document.querySelectorAll('.lost-item');
+
+  function flapOne(item) {
+    item.classList.add('flap-lost');
+    setTimeout(() => item.classList.remove('flap-lost'), 300);
+  	}
+
+  function startFlapping() {
+    // 順番にバサバサ
+    items.forEach((item, i) => {
+      setTimeout(() => flapOne(item), i * 400);
+    });
+
+    // 全員同時にバサバサ
+    setTimeout(() => {
+      items.forEach(item => flapOne(item));
+    }, items.length * 400 + 600);
+
+		setInterval(() => {
+  		const items = document.querySelectorAll(".lost-item");
+  		// ランダムに1〜2個だけ選んで動かす
+  		const shuffled = [...items].sort(() => 0.5 - Math.random());
+  		const pickCount = Math.random() < 0.3 ? 2 : 1; // 30%の確率で2個同時
+  		shuffled.slice(0, pickCount).forEach(item => {
+    	item.classList.add("flap-lost");
+    	setTimeout(() => item.classList.remove("flap-lost"), 300);
+  			});
+			}, 5000);   
+  	}
+		
+	// IntersectionObserver で画面に入ったら開始
+  const lostAndFound = document.querySelector('.lost-and-found');
+  const observer = new IntersectionObserver((entries, obs) => {
+    if (entries[0].isIntersecting) {
+      	startFlapping();
+      	obs.disconnect(); // 一度だけ発火
+    	}
+  	}, { threshold: 0.3 }); // 30%以上見えたら発火
+  	observer.observe(lostAndFound);
+	});
 
 </script>
-
 <footer>
   &copy; 2025 Morning Glory 朝顔の魔法
 </footer>
